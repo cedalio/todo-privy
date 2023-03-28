@@ -34,22 +34,23 @@ const style = {
 };
 
 const TRACKING_ID = String(process.env.REACT_APP_TRACKING_ID)
-
-
+const _global = (window /* browser */ || global /* node */) as any
 
 export default function App() {
   const [deployed, setDeployed] = React.useState(false);
   const [uri, setUri] = React.useState('');
   const [contractAddress, setContractAddress] = React.useState<string | undefined>();
-  const projectId = String(process.env.REACT_APP_WC_PROJECT_ID)
-  // const { address } = useAccount()
   const [open, setOpen] = React.useState(false);
   const [response, setResponse] = React.useState("");
   const handleClose = () => setOpen(false);
-  const { ready, authenticated, user, login } = usePrivy()
+  const { ready, authenticated, user, login, logout, getAccessToken } = usePrivy()
 
+  _global.login = login;
+  _global.logout = logout;
 
   function requestDeployToGateway(address: string) {
+    const token = getAuthToken(address)
+    console.log(token)
     const url = `${process.env.REACT_APP_GRAPHQL_GATEWAY_BASE_URL}/deploy`
     const payload = {
       email: "todo-multi.cedalio.com",
@@ -58,7 +59,6 @@ export default function App() {
             title: String!
             description: String
             priority: Int!
-            owner: String!
             tags: [String!]
             status: String
           }
@@ -93,11 +93,31 @@ export default function App() {
     }
   }
 
+  async function getAuthToken(address: string){
+
+    const url = `${process.env.REACT_APP_GRAPHQL_GATEWAY_BASE_URL}/auth/verify`
+
+    const privyToken = getAccessToken()
+
+    const payload = {
+      "jwt": privyToken,
+      "account": address
+    }
+
+    const response = await axios.post(
+      url, payload
+    )
+
+    const token = response.data.token
+
+    return token
+
+  }
+
   useEffect(() => {
     const deployed = Boolean(localStorage.getItem('deployed'))
     const contractAddress = localStorage.getItem('contractAddress')
     const deploymentId = localStorage.getItem('deploymentId')
-
     if (deployed && contractAddress && deploymentId) {
       setUri(`${String(process.env.REACT_APP_GRAPHQL_GATEWAY_BASE_URL)}/${deploymentId}/graphql`)
       setDeployed(deployed)
