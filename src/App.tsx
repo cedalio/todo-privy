@@ -51,10 +51,11 @@ export default function App() {
   function requestDeployToGateway(address: string) {
     getAuthToken(address)
       .then((token) => {
-        localStorage.setItem("auth_token", token);
-  
+        
+        localStorage.setItem("auth_token", String(token));
+
         const url = `${process.env.REACT_APP_GRAPHQL_GATEWAY_BASE_URL}/deploy`;
-  
+
         const payload = {
           email: "todo-multi.cedalio.com",
           schema: `type Todo {
@@ -68,9 +69,9 @@ export default function App() {
           schema_owner: address,
           network: "polygon:mumbai",
         };
-  
+
         setOpen(true);
-  
+
         axios
           .post(url, payload, {
             headers: {
@@ -102,8 +103,8 @@ export default function App() {
         setResponse("error");
       });
   }
-  
-   
+
+
 
 
   async function redeploy() {
@@ -113,10 +114,10 @@ export default function App() {
     }
   }
 
-  async function getAuthToken(address: string){
+  async function getAuthToken(address: string) {
 
     const url = `${process.env.REACT_APP_GRAPHQL_GATEWAY_BASE_URL}/auth/privy`
-    
+
     //when using privy sdk the value is stored as string with ""
     const privyToken = localStorage.getItem("privy:token")?.replaceAll('"', "");
 
@@ -124,15 +125,12 @@ export default function App() {
       "jwt": privyToken,
       "account": address
     }
-
-    const response = await axios.post(
+    const response =await axios.post(
       url, payload
     )
-
     const token = response.data.token
-
     return token
-
+    
   }
 
   useEffect(() => {
