@@ -34,7 +34,6 @@ const style = {
 };
 
 const TRACKING_ID = String(process.env.REACT_APP_TRACKING_ID)
-const _global = (window /* browser */ || global /* node */) as any
 
 export default function App() {
   const [deployed, setDeployed] = React.useState(false);
@@ -43,10 +42,7 @@ export default function App() {
   const [open, setOpen] = React.useState(false);
   const [response, setResponse] = React.useState("");
   const handleClose = () => setOpen(false);
-  const { ready, authenticated, user, login, logout } = usePrivy()
-
-  _global.login = login;
-  _global.logout = logout;
+  const { ready, authenticated, user, login } = usePrivy()
 
   function requestDeployToGateway(address: string) {
     getAuthToken(address)
