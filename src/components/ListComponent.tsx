@@ -101,8 +101,13 @@ export default function ListComponent(props: { address: string | undefined }) {
     const { loading, error, data } = useQuery(GET_TODOS);
 
     React.useEffect(() => {
-        if (data) setTodos(data.todoCollection.edges);
-    }, [data]);
+        if (data) {
+            const extractedTodos = data.todoCollection.edges.map((edge: any) => edge.node);
+            setTodos(extractedTodos);
+          } else {
+            setTodos([]); 
+          }
+        }, [data]);
 
     React.useEffect(() => {
         if (newTodo) {
