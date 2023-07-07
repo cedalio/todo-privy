@@ -93,7 +93,7 @@ export default function App() {
             setContractAddress(response.data.contract_address);
             setResponse("success");
             setUri(
-              `https://${process.env.REACT_APP_PROJECT_ID}.${process.env.REACT_APP_CEDALIO_DOMAIN}/${response.data.deployment_id}/graphql`
+              `https://${process.env.REACT_APP_PROJECT_ID}.${process.env.REACT_APP_CEDALIO_DOMAIN}/deployments/${response.data.deployment_id}/graphql`
             );
           })
           .catch(function (error: any) {
@@ -159,7 +159,7 @@ export default function App() {
     const deploymentId = localStorage.getItem('deploymentId')
     if (deployed && deploymentId) {
       getAuthToken(String(user?.wallet?.address)).then((token)=>{
-        setUri(`https://${process.env.REACT_APP_PROJECT_ID}.${process.env.REACT_APP_CEDALIO_DOMAIN}/${deploymentId}/graphql`)
+        setUri(`https://${process.env.REACT_APP_PROJECT_ID}.${process.env.REACT_APP_CEDALIO_DOMAIN}/deployments/${deploymentId}/graphql`)
         setDeployed(deployed)
       })
     }
